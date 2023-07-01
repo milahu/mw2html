@@ -22,7 +22,7 @@ import textwrap
 import urllib.parse
 import os, os.path
 import errno
-import sha
+from hashlib import sha1
 
 try:
   set
@@ -92,7 +92,7 @@ def monobook_fix_html_sidebar(doc, config):
   if config.made_by:
     doc = doc.replace('<html xmlns=', MADE_BY_COMMENT + '\n<html xmlns=')
 
-  SIDEBAR_ID = 'SIDEBAR' + sha.new(str(random.random())).hexdigest()
+  SIDEBAR_ID = 'SIDEBAR' + sha1(str(random.random()).encode('ascii')).hexdigest()
 
   # Remove sidebar HTML
   doc = re.sub(
@@ -407,7 +407,7 @@ def clean_filename(url, config, ans):
     if os.path.splitext(tail)[1] == '.png':
       tail = os.path.splitext(tail)[0]
       if set(tail) <= set('0123456789abcdef') and len(tail) == 32:
-        ans = 'math_' + sha.new(tail).hexdigest()[:4] + '.png'
+        ans = 'math_' + sha1(tail.encode('utf8')).hexdigest()[:4] + '.png'
   return os.path.join(par, ans)
 
 
