@@ -16,10 +16,10 @@ import re
 import sys
 import getopt
 import random
-import urllib
-import urllib2
+import urllib.request, urllib.parse, urllib.error
+import urllib.request, urllib.error, urllib.parse
 import textwrap
-import urlparse
+import urllib.parse
 import os, os.path
 import errno
 import sha
@@ -32,8 +32,8 @@ except:
 try:
   import htmldata
 except:
-  print 'Requires Python htmldata module:'
-  print '  http://oregonstate.edu/~barnesc/htmldata/'
+  print('Requires Python htmldata module:')
+  print('  http://oregonstate.edu/~barnesc/htmldata/')
   sys.exit()
 
 MOVE_HREF          = 'movehref'
@@ -301,7 +301,7 @@ def url_to_filename(url, config):
   if part.lower().startswith('http://'):
     part = part[len('http://'):]
   L = part.strip('/').split('/')
-  L = [urllib.quote_plus(x) for x in L]
+  L = [urllib.parse.quote_plus(x) for x in L]
   if len(L) <= 1 or not '.' in L[-1]:
     # url ends with a directory name.  Store it under index.html.
     L += [INDEX_HTML]
@@ -313,8 +313,8 @@ def url_to_filename(url, config):
   # Fix up extension based on mime type.
   fix_ext = True
   try:
-    f = urllib2.urlopen(url)
-  except urllib2.URLError, e:
+    f = urllib.request.urlopen(url)
+  except urllib.error.URLError as e:
     fix_ext = False
 
   if fix_ext:
@@ -468,7 +468,7 @@ def url_to_relative(url, cururl, config):
     L1 = L1[1:]
     L2 = L2[1:]
 
-  return urllib.quote('../' * (len(L2) - 1) + '/'.join(L1)) + section
+  return urllib.parse.quote('../' * (len(L2) - 1) + '/'.join(L1)) + section
 
 
 def parse_css(doc, url, config):
@@ -495,7 +495,7 @@ def get_domain(u):
   """
   Get domain of URL.
   """
-  ans = urlparse.urlparse(u)[1]
+  ans = urllib.parse.urlparse(u)[1]
   if ':' in ans:
     ans = ans[:ans.index(':')]
   return ans
@@ -559,7 +559,7 @@ def run(config, out=sys.stdout):
   """
   Code interface.
   """
-  if urlparse.urlparse(config.rooturl)[1].lower().endswith('wikipedia.org'):
+  if urllib.parse.urlparse(config.rooturl)[1].lower().endswith('wikipedia.org'):
     out.write('Please do not use robots with the Wikipedia site.\n')
     out.write('Instead, install the Wikipedia database locally and use mw2html on\n')
     out.write('your local installation.  See the Mediawiki site for more information.\n')
@@ -581,8 +581,8 @@ def run(config, out=sys.stdout):
       continue
     complete.add(url)
     try:
-      f        = urllib2.urlopen(url)
-    except urllib2.URLError, e:
+      f        = urllib.request.urlopen(url)
+    except urllib.error.URLError as e:
       try:
         out.write(str(e.code) + ': ' + url + '\n\n')
       except:
@@ -615,7 +615,7 @@ def run(config, out=sys.stdout):
     # Make parent directory if it doesn't exist.
     try:
       os.makedirs(os.path.split(filename)[0])
-    except OSError, e:
+    except OSError as e:
       if e.errno != errno.EEXIST:
         raise
 
@@ -680,7 +680,7 @@ def usage():
 
   """
 
-  print textwrap.dedent(usage_str.strip('\n'))
+  print(textwrap.dedent(usage_str.strip('\n')))
   sys.exit(1)
 
 
